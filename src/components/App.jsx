@@ -15,8 +15,12 @@ export const App = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
+  const [shouldFetchImages, setShouldFetchImages] = useState(true);
 
   useEffect(() => {
+    if (!shouldFetchImages) {
+      return;
+    }
     if (search === '' && gallery.length === 0) {
       return;
     }
@@ -34,17 +38,20 @@ export const App = () => {
       })
       .catch(error => setError(error.message))
       .finally(() => setLoading(false));
-  }, [search, page]);
+    setShouldFetchImages(false);
+  }, [search, page, shouldFetchImages, gallery.length]);
 
   const handleFormSubmit = newSearch => {
     setSearch(newSearch);
     setGallery([]);
     setPage(1);
     setTotalImages(0);
+    setShouldFetchImages(true);
   };
 
   const loadMoreImages = () => {
     setPage(prevPage => prevPage + 1);
+    setShouldFetchImages(true);
   };
 
   const openModal = image => {
